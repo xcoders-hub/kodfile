@@ -51,6 +51,7 @@ function plugin_check_auth($app,$auth){
 		
 		'ldapAccess'		=> 'T',// AD域账户认证
 		'fileView'			=> 'T',// 文件通用预览API
+		'waterMark'         => 'Q',// 文档水印插件
 	);
 	$systemVersion = $GLOBALS['config']['settingSystem']['versionType'];
 	if(isset($array[$app]) && $systemVersion < $array[$app]){
