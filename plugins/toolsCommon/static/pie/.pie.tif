@@ -40,6 +40,12 @@ function user_home_path($info){
 
 //挂载插件检测
 function plugin_check_auth($app,$auth){
+	if(!plugin_check_allow($app)){
+		return false;
+	}
+	return check_user_select($auth);
+}
+function plugin_check_allow($app){
 	$array = array(
 		'autoDeskViewer'	=> 'Q',// AutoCAD在线预览
 		'gstarCAD'			=> 'P',// 浩辰CAD预览
@@ -57,7 +63,7 @@ function plugin_check_auth($app,$auth){
 	if(isset($array[$app]) && $systemVersion < $array[$app]){
 		return false;
 	}
-	return check_user_select($auth);
+	return true;
 }
 
 //======================================
@@ -71,55 +77,40 @@ function system_space(){
 }
 // systemMember.get …… reset length;
 // systemMember.add ==>not supprot isImport)    systemMember.doAction in['action']='del'
-function systemMemberData(){
+function systemMemberData($type=''){
 	global $in;
 	$key = ST.'.'.ACT;
-	$typeA = "A";
-	$typeO = "O";
-	$typeP = "P";
-	$typeQ = "Q";
-	$typeR = "R";
-	$typeS = "S";
-	$typeT = "T";
-
+	$typeA   = 'A';
 	$version = $GLOBALS['config']['settingSystem']['versionType'];
-	if( !$version || 
-		!in_array($version, array($typeA,$typeO,$typeP,$typeQ,$typeR,$typeS,$typeT))){
+	$licenseList = systemLimitData('licenseList');
+	if( !$version || !in_array($version, $licenseList) ){
 		$version = $typeA;
 	}
-	$sql = new FileCache(USER_SYSTEM.'system_member.php');
-	$limitNum = array(
-		$typeA => 5,
-		$typeO => 15,
-		$typeP => 50,
-		$typeQ => 150,
-		$typeR => 500,
-		$typeS => 1000,
-		$typeT => 1000,
-	);
 
+	$sql = new FileCache(USER_SYSTEM.'system_member.php');
+	$limitNum = systemLimitData('core_tools_memberLimit');
 	$list = $sql->get();
 	$allowNum = $limitNum[$version];
 
 	//添加；数量限制
 	if($key == 'systemMember.add'){
 		if($version == $typeA && isset($in['isImport'])){
-			show_json(LNG('version_not_support'),false,'version_error');
+			show_json('version_not_support',false,'version_error');
 		}
 		if(count($list) >= $allowNum && $allowNum != 1000){
-			show_json(LNG('version_not_support_number'),false,'version_error');
+			show_json('version_not_support_number',false,'version_error');
 		}
 	}
 
 	//添加编辑；免费版不支持指定用户目录
 	if($key == 'systemMember.add' || $key == 'systemMember.edit'){
 		if($version == $typeA && isset($in['homePath'])){
-			show_json(LNG('version_not_support'),false,'version_error');
+			show_json('version_not_support',false,'version_error');
 		}
 	}
 
 	//只处理展示时数据和登陆数据
-	if($key == 'systemMember.get'){
+	if($key == 'systemMember.get' || $type == 'checkUserLimit'){
 		// 裁剪数据
 		if( count($list) > $allowNum  && $allowNum != 1000){
 			$index = 1;
@@ -147,48 +138,56 @@ function systemMemberData(){
 	return $sql;
 }
 
+function systemLimitData($type){
+	$limitNum = array();
+	$limitNum['core_tools_memberLimit'] = array(
+		"A" => 15,
+		"O" => 30,	"O1"=>100,
+		"P" => 50,
+		"Q" => 150,	"Q1"=>30,"Q2"=>50,"Q3"=>100,"Q4"=>150,"Q5"=>250,"Q6"=>500,"Q7"=>1001,"Q8"=>1500,"Q9"=>2000,
+		"R" => 500,
+		"S" => 1000,
+		"T" => 1000
+	);
+	$limitNum['core_tools_groupLimit'] = array(
+		"A" => 1,
+		"O" => 5,	"O1" => 30,
+		"P" => 20,
+		"Q" => 40,	"Q1"=>1000,"Q2"=>1000,"Q3"=>1000,"Q4"=>1000,"Q5"=>1000,"Q6"=>1000,"Q7"=>1000,"Q8"=>1000,"Q9"=>1000,
+		"R" => 100,
+		"S" => 1000,
+		"T" => 1000
+	);
+	if($type == 'licenseList'){
+		return array_keys($limitNum['core_tools_memberLimit']);
+	}
+	return $limitNum[$type];
+}
 function systemGroupData(){
 	global $in;
 	$key = ST.'.'.ACT;
-	$typeA = "A";
-	$typeO = "O";
-	$typeP = "P";
-	$typeQ = "Q";
-
-	$typeR = "R";
-	$typeS = "S";
-	$typeT = "T";
-
+	$typeA   = 'A';
 	$version = $GLOBALS['config']['settingSystem']['versionType'];
-	if( !$version || 
-		!in_array($version, array($typeA,$typeO,$typeP,$typeQ,$typeR,$typeS,$typeT))){
+	$licenseList = systemLimitData('licenseList');
+	if( !$version || !in_array($version, $licenseList) ){
 		$version = $typeA;
 	}
 	$sql = new FileCache(USER_SYSTEM.'system_group.php');
-	$limitNum = array(
-		$typeA	=> 1,
-		$typeO	=> 5,
-		$typeP	=> 20,
-		$typeQ	=> 40,
-
-		$typeR	=> 100,
-		$typeS	=> 1000,
-		$typeT	=> 1000,
-	);
+	$limitNum = systemLimitData('core_tools_groupLimit');
 	$list = $sql->get();
 	$allowNum = $limitNum[$version];
 
 	//添加
 	if($key == 'systemGroup.add'){
 		if(count($list) >= $allowNum && $allowNum != 1000){
-			show_json(LNG('version_not_support_number'),false,'version_error');
+			show_json('version_not_support_number',false,'version_error');
 		}
 	}
 
 	//添加编辑；免费版不支持指定用户目录
 	if($key == 'systemGroup.add' || $key == 'systemGroup.edit'){
 		if($version == $typeA && isset($in['homePath'])){
-			show_json(LNG('version_not_support'),false,'version_error');
+			show_json('version_not_support',false,'version_error');
 		}
 	}
 
@@ -237,30 +236,28 @@ function systemRoleData(){
 			is_array($_SESSION['kodUser']) &&
 			$_SESSION['kodUser']['role'] == "1"){
 			version_reset(false);
-			include(TEMPLATE.'user/license.html');
-			exit;
+			license_page();
 		}
 	}
 	// check success
 	$sql = new FileCache(USER_SYSTEM.'system_role.php');
 	return $sql;
 }
+function license_page(){
+	init_model('Plugin')->init();
+	include(TEMPLATE.'user/license.html');
+	exit;
+}
+
 
 // appid&appkey&license&time  A || O P Q
 function init_version_check(){
 	$setting = &$GLOBALS['config']['settingSystem'];
 	$pass = "@dfq[-)&*^*%(_90";
-	$typeA = "A";
-	$typeO = "O";
-	$typeP = "P";
-	$typeQ = "Q";
-
-	$typeR = "R";
-	$typeS = "S";
-	$typeT = "T";
-
-	if( !isset($setting['versionType'])|| 
-		!in_array($setting['versionType'],array($typeA,$typeO,$typeP,$typeQ,$typeR,$typeS,$typeT))){
+	
+	$typeA   = 'A';
+	$licenseList = systemLimitData('licenseList');
+	if( !isset($setting['versionType']) || !in_array($setting['versionType'], $licenseList) ){
 		$setting['versionType'] = $typeA;
 	}
 	if($setting['versionType'] == $typeA){
@@ -279,8 +276,7 @@ function init_version_check(){
 	}
 
 	// check length
-	if( strlen($setting['versionType']) != 1  ||
-		strlen($setting['versionUser']) != 16 ||
+	if( strlen($setting['versionUser']) != 16 ||
 		strlen($setting['versionLicense']) != 62 ||
 		strlen($setting['deviceUUID'])  != 16
 		){
@@ -292,7 +288,7 @@ function init_version_check(){
 	$randKey = substr($setting['versionLicense'],32);
 	$md5License = md5($randKey.$setting['versionUser'].$setting['deviceUUID'].$setting['versionType']);
 	if($md5License != substr($setting['versionLicense'],0,32)){
-		//show_json('3');
+		// show_json(array('3',$setting['versionType']));
 		return false;
 	}
 
@@ -313,13 +309,13 @@ function init_version_check(){
 		}
 	}
 	if(!$pathCheck){
-		//show_json(array(3,$path,$time,$content));
+		// show_json(array(3,$path,$time,$content));
 		return false;
 	}
 	
 	//encode([10~md5(license,10,10)][versionType][device_uuid]
 	$licenseHash = substr(md5($setting['versionLicense']),10,10);
-	$hashStr = $licenseHash.$setting['versionType'].$setting['deviceUUID'];//10+1+16
+	$hashStr = $licenseHash.$setting['versionType'].$setting['deviceUUID'];//10+1or2+16
 	$setting['versionHash'] = strrev(base64_encode(Mcrypt::encode($hashStr,$pass,0)));
 
 	$rand = rand_string(16);
@@ -337,8 +333,7 @@ function version_install(){
 		header("location:./");
 	}
 	if(!isset($_GET['license_code'])){
-		include(TEMPLATE.'user/license.html');
-		exit;
+		license_page();
 	}else{//install	
 		$device_uuid = rand_string(16);
 		$api = "license/index";
@@ -360,7 +355,6 @@ function version_install(){
 			$config['versionLicense'] = $result['data']['version_license'];
 			$config['deviceUUID'] = $device_uuid;
 			$config['versionType'] = $result['data']['version_type'];
-
 			$path = Mcrypt::decode($setting['devicePath'],md5($pass.$setting['versionLicense']));
 			del_file($path);
 			version_install_path($config,$result['data']);
