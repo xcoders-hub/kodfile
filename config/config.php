@@ -11,7 +11,7 @@ define('GLOBAL_DEBUG_HOOK',0);//0 or 1
 @date_default_timezone_set(@date_default_timezone_get());
 @set_time_limit(1200);//20min pathInfoMuti,search,upload,download...
 @ini_set("max_execution_time",1200);
-@ini_set('memory_limit','500M');//
+@ini_set('memory_limit','1000M');//
 @ini_set('session.cache_expire',1800);
 
 if(GLOBAL_DEBUG){
