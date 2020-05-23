@@ -1,13 +1,7 @@
-{
-  "ext-curl": ">=7.0",
-  "php": ">=5.3.3",
-  "ext-gd": ">=7.0",
-  "ext-json": ">=1.4.0",
-  "ext-mbstring": ">=7.0",
-  "ext-openssl": ">=7.0",
-  "ext-pcre": ">=7.0",
-  "ext-pdo": ">=7.0",
-  "ext-tokenizer": ">=7.0",
-  "ext-xml": ">=7.0",
-  "ext-zip": ">=1.14.0"
-}
+"require": {
+    "php": ">=5.3.3",
+    "ext-gd": ">=7.0",
+    "ext-curl": ">=7.0",
+    "twig/extensions": "~1.0",
+    "ext-mbstring": ">=7.0"
+},
