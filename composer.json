@@ -1,5 +1,0 @@
-"require": {
-    "php": ">=5.3.3",
-    "twig/extensions": "~1.0",
-    "ext-mbstring": "*"
-},
