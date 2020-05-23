@@ -1,9 +1,5 @@
-{
-    "require": {
+"require": {
     "php": ">=5.3.3",
-    "ext-gd": ">=7.0",
-    "ext-curl": ">=7.0",
     "twig/extensions": "~1.0",
-    "ext-mbstring": ">=7.0"
-    }
+    "ext-mbstring": "*"
 },
