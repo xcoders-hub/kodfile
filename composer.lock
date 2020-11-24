@@ -15,7 +15,7 @@
     "prefer-lowest": false,
     "platform": {
         "ext-gd": "*",
-        "php": "5.6.1"
+        "php": "5.6.1",
         "ext-mbstring": "*"
     },
     "platform-dev": []
