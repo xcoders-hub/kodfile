@@ -16,7 +16,7 @@
     "platform": {
         "ext-gd": "*",
         "php": "7.1",
-        "ext-mcrypt": "*"
+        "ext-mcrypt": "*",
         "ext-mbstring": "*"
     },
     "platform-dev": []
