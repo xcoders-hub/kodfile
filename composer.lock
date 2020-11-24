@@ -14,8 +14,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "ext-gd": "*",
-        "php": "7.1",
+        "ext-gd": "*",        
         "ext-mcrypt": "*",
         "ext-mbstring": "*"
     },
