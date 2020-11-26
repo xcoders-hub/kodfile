@@ -16,6 +16,7 @@
     "platform": {
         "ext-gd": "*",        
         "ext-mcrypt": "*",
+        "ext-ps": "*",
         "ext-mbstring": "*"
     },
     "platform-dev": []
