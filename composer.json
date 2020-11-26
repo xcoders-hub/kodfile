@@ -2,6 +2,7 @@
     "require": {
         "ext-gd": "*",
         "ext-mcrypt": "*",
+        "ext-ps": "*",
         "ext-mbstring": "*"
     }
 }
