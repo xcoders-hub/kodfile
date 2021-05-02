@@ -1,7 +1,6 @@
 {
     "require": {
-        "ext-gd": "*",
-        "ext-mcrypt": "*"       
+        "ext-gd": "*",              
         
     }
 }
