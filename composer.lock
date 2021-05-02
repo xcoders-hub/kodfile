@@ -14,8 +14,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "ext-gd": "*",        
-        "ext-mcrypt": "*"      
+        "ext-gd": "*"       
+             
       },
     "platform-dev": []
 }
